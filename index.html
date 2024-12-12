@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tecnologia e Inovação - Jogo de Animais</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1E3A5F;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        #game-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #animal-image {
+            max-width: 300px;
+            max-height: 300px;
+            margin-bottom: 20px;
+        }
+        #input-container {
+            margin-bottom: 20px;
+        }
+        #animal-input {
+            font-size: 18px;
+            padding: 5px;
+        }
+        #countdown, #progress {
+            margin-top: 10px;
+        }
+        #virtual-keyboard {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            max-width: 800px;
+            margin-top: 20px;
+            border: 2px solid #FFA500;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+        .key {
+            background-color: #FFA500;
+            color: black;
+            border: 1px solid #FF8C00;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            min-width: 30px;
+            border-radius: 5px;
+        }
+        .key-wide {
+            min-width: 80px;
+        }
+        .key-space {
+            width: 200px;
+        }
+        footer {
+            background-color: #FFA500;
+            color: black;
+            width: 100%;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tecnologia e Inovação</h1>
+    <div id="game-container">
+        <img id="animal-image" src="" alt="Animal">
+        <div id="input-container">
+            <label for="animal-input">Digite:</label>
+            <input type="text" id="animal-input">
+        </div>
+        <div id="countdown"></div>
+        <div id="progress"></div>
+    </div>
+    <div id="virtual-keyboard"></div>
+    <footer>Feito pelo professor Marco Aurélio</footer>
+
+    <script>
+        const animalNames = [
+            "leão", "vaca", "sapo", "elefante", "cavalo", "gato", "golfinho", "papagaio", "porco", "galinha",
+            "cachorro", "tigre", "urso", "burro", "ovelha", "lobo", "abelha", "esquilo", "cabra", "macaco",
+            "hipopótamo", "mosca", "besouro", "coelho", "zebra", "girafa", "arara", "coruja", "raposa", "pinguim",
+            "bem-te-vi", "peru", "águia", "foca", "corvo", "hiena", "ganso", "búfalo", "jacaré", "cobra",
+            "rinoceronte", "tucano", "morcego", "avestruz", "tubarão", "camelo", "rato", "cervo", "canguru", "coala"
+        ];
+
+        let currentAnimalIndex = 0;
+        let countdown;
+        const inputElement = document.getElementById('animal-input');
+        const imageElement = document.getElementById('animal-image');
+        const countdownElement = document.getElementById('countdown');
+        const progressElement = document.getElementById('progress');
+        const keyboardElement = document.getElementById('virtual-keyboard');
+
+        async function getAnimalImage(animalName) {
+            const response = await fetch(`https://api.unsplash.com/search/photos?query=${animalName}&client_id=B3vpNSwKf5wOvE1zfivPCwqsoSlErlLEjexFw_EwNLg`);
+            const data = await response.json();
+            if (data.results.length > 0) {
+                return data.results[0].urls.small;
+            }
+            return '';
+        }
+
+        async function showNextAnimal() {
+            if (currentAnimalIndex < animalNames.length) {
+                const animalName = animalNames[currentAnimalIndex];
+                const imageUrl = await getAnimalImage(animalName);
+                imageElement.src = imageUrl || 'placeholder.jpg';
+                imageElement.alt = animalName;
+                inputElement.value = '';
+                inputElement.style.color = 'black';
+                startCountdown();
+            } else {
+                alert('Parabéns! Você completou todos os animais!');
+            }
+        }
+
+        function startCountdown() {
+            let timeLeft = 10;
+            countdownElement.textContent = `Tempo restante: ${timeLeft}s`;
+            countdown = setInterval(() => {
+                timeLeft--;
+                countdownElement.textContent = `Tempo restante: ${timeLeft}s`;
+                if (timeLeft === 0) {
+                    clearInterval(countdown);
+                    countdownElement.textContent = `O nome do animal é: ${animalNames[currentAnimalIndex]}`;
+                }
+            }, 1000);
+        }
+
+        function updateProgress() {
+            progressElement.textContent = `Animais digitados: ${currentAnimalIndex} / ${animalNames.length}`;
+        }
+
+        function createVirtualKeyboard() {
+            const keyboardLayout = [
+                ['\'', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
+                ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '´', '[', ']'],
+                ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ç', '~'],
+                ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', ';', 'Shift'],
+                ['espaço']
+            ];
+
+            keyboardLayout.forEach(row => {
+                const rowElement = document.createElement('div');
+                rowElement.className = 'keyboard-row';
+                row.forEach(key => {
+                    const button = document.createElement('button');
+                    button.textContent = key;
+                    button.className = 'key';
+                    if (['Backspace', 'Shift'].includes(key)) {
+                        button.className += ' key-wide';
+                    }
+                    if (key === 'espaço') {
+                        button.className += ' key-space';
+                    }
+                    button.onclick = () => {
+                        if (key === 'Backspace') {
+                            inputElement.value = inputElement.value.slice(0, -1);
+                        } else if (key === 'espaço') {
+                            inputElement.value += ' ';
+                        } else if (key === 'Shift') {
+                            // Não faz nada por enquanto
+                        } else {
+                            inputElement.value += key;
+                        }
+                        checkInput();
+                    };
+                    rowElement.appendChild(button);
+                });
+                keyboardElement.appendChild(rowElement);
+            });
+        }
+
+        function checkInput() {
+            const currentAnimal = animalNames[currentAnimalIndex];
+            if (inputElement.value.toLowerCase() === currentAnimal) {
+                inputElement.style.color = 'blue';
+                setTimeout(() => {
+                    currentAnimalIndex++;
+                    clearInterval(countdown);
+                    showNextAnimal();
+                    updateProgress();
+                }, 500);
+            } else {
+                inputElement.style.color = inputElement.value.toLowerCase().startsWith(currentAnimal.slice(0, inputElement.value.length)) ? 'blue' : 'red';
+            }
+        }
+
+        inputElement.addEventListener('input', checkInput);
+
+        function startGame() {
+            showNextAnimal();
+            updateProgress();
+            createVirtualKeyboard();
+        }
+
+        startGame();
+    </script>
+</body>
+</html>
