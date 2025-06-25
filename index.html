@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atividade Interativa de Digitação - Tecnologia</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Tela Inicial -->
+    <div id="initial-screen" class="screen active">
+        <div class="container">
+            <div class="welcome-container">
+                <h1 class="main-title">🖥️ Atividade de Digitação</h1>
+                <p class="subtitle">Tecnologia no Nosso Dia a Dia</p>
+                <p class="instructions">Escolha seu ano escolar para começar:</p>
+                
+                <div class="grade-buttons">
+                    <button class="btn btn--primary btn--lg grade-btn" onclick="selectGrade('3ano')">
+                        <span class="grade-number">3º</span>
+                        <span class="grade-text">Ano</span>
+                    </button>
+                    <button class="btn btn--primary btn--lg grade-btn" onclick="selectGrade('4ano')">
+                        <span class="grade-number">4º</span>
+                        <span class="grade-text">Ano</span>
+                    </button>
+                    <button class="btn btn--primary btn--lg grade-btn" onclick="selectGrade('5ano')">
+                        <span class="grade-number">5º</span>
+                        <span class="grade-text">Ano</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela Principal de Digitação -->
+    <div id="typing-screen" class="screen">
+        <div class="container">
+            <div class="typing-header">
+                <h2 id="grade-title">Digitação - 3º Ano</h2>
+                <p class="typing-instructions">
+                    Digite o texto exatamente como aparece à esquerda. 
+                    <span class="highlight">Texto correto aparece em preto, erros em vermelho.</span>
+                </p>
+                <button class="btn btn--outline back-btn" onclick="goBackToInitial()">
+                    ← Voltar ao Início
+                </button>
+            </div>
+
+            <div class="typing-main">
+                <div class="text-display">
+                    <h3>📝 Texto para Digitação:</h3>
+                    <div id="original-text" class="original-text"></div>
+                </div>
+
+                <div class="typing-area">
+                    <h3>✍️ Digite Aqui:</h3>
+                    <textarea 
+                        id="user-input" 
+                        class="form-control typing-field" 
+                        placeholder="Comece a digitar aqui..."
+                        autocomplete="off"
+                        spellcheck="false"
+                    ></textarea>
+                    
+                    <div class="stats">
+                        <div class="stat-item stat-correct">
+                            <span class="stat-label">✅ Acertos:</span>
+                            <span id="correct-count">0</span>
+                        </div>
+                        <div class="stat-item stat-error">
+                            <span class="stat-label">❌ Erros:</span>
+                            <span id="error-count">0</span>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn--secondary" onclick="tryAgain()">
+                            🔄 Tentar Novamente
+                        </button>
+                        <button class="btn btn--primary" onclick="changeText()">
+                            🎲 Trocar Texto
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Parabéns -->
+    <div id="success-modal" class="modal">
+        <div class="modal-content">
+            <div class="success-content">
+                <div class="success-icon">🎉</div>
+                <h2>Parabéns!</h2>
+                <p>Você digitou o texto corretamente!</p>
+                <div class="success-stats">
+                    <div class="success-stat">
+                        <span class="stat-number" id="final-correct">0</span>
+                        <span class="stat-text">Acertos</span>
+                    </div>
+                    <div class="success-stat">
+                        <span class="stat-number" id="final-errors">0</span>
+                        <span class="stat-text">Erros</span>
+                    </div>
+                </div>
+                <div class="success-buttons">
+                    <button class="btn btn--primary" onclick="changeText()">
+                        🎲 Novo Texto
+                    </button>
+                    <button class="btn btn--secondary" onclick="goBackToInitial()">
+                        🏠 Tela Inicial
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
